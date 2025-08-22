@@ -9,6 +9,6 @@ public class Order
 
     public string Description { get; set; } // например "1 штук", "1 рез полный"
     public DateTime PickupDateTime { get; set; } // дата + время
-
-    public bool IsPaid { get; set; } = false; // отметка оплаты
+    public bool IsCompleted { get; set; } // выполнен или нет
+    public bool IsPaid { get; set; } // оплачен или нет
 }
