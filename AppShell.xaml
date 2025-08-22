@@ -10,5 +10,10 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+     <Tab Title="Заказчики" Icon="customers.png">
+        <ShellContent ContentTemplate="{DataTemplate local:CustomerPage}" />
+    </Tab>
+
+
 
 </Shell>
