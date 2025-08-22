@@ -38,7 +38,7 @@ public partial class CustomerPage : ContentPage
             bool confirm = await DisplayAlert("Удалить?", $"Удалить {customer.Name}?", "Да", "Нет");
             if (confirm)
             {
-                await App.Database.DeleteOrderAsync(customer); // нужно будет сделать метод для Customers
+                await App.Database.DeleteCustomerAsync(customer); // нужно будет сделать метод для Customers
                 LoadCustomers();
             }
         }
