@@ -7,17 +7,26 @@
         <CollectionView x:Name="OrdersView">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Padding="10" Margin="0,0,0,8">
+                    <Border Stroke="LightGray"
+                            StrokeThickness="1"
+                            Padding="10"
+                            Margin="0,0,0,8"
+                            StrokeShape="RoundRectangle 6">
                         <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
                             <Label Text="{Binding CustomerName}" FontAttributes="Bold"/>
                             <Label Grid.Row="1" Text="{Binding Description}" />
                             <Label Grid.ColumnSpan="3" Grid.Row="0" HorizontalOptions="End"
                                    Text="{Binding PickupDateTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" />
 
-                            <Button Grid.Column="1" Grid.Row="1" Text="Выполнено" Clicked="OnCompleteClicked" Margin="8,0"/>
-                            <Button Grid.Column="2" Grid.Row="1" Text="Оплачено" Clicked="OnPaidClicked"/>
+                            <Button Grid.Column="1" Grid.Row="1" 
+                                    Text="Выполнено" 
+                                    Clicked="OnCompleteClicked" 
+                                    Margin="8,0"/>
+                            <Button Grid.Column="2" Grid.Row="1" 
+                                    Text="Оплачено" 
+                                    Clicked="OnPaidClicked"/>
                         </Grid>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
