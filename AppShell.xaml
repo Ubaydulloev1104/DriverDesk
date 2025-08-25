@@ -1,14 +1,29 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <Shell
     x:Class="DriverDesk.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:DriverDesk"
+    xmlns:pages="clr-namespace:DriverDesk.Pages"
     Title="DriverDesk">
 
     <ShellContent
-        Title="Home"
+        Title="Главная"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
+    <FlyoutItem Title="Заказы">
+        <ShellContent Title="Активные" ContentTemplate="{DataTemplate pages:OrdersPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Добавить заказ">
+        <ShellContent ContentTemplate="{DataTemplate pages:AddOrderPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Заказчики">
+        <ShellContent ContentTemplate="{DataTemplate pages:CustomersPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Должники">
+        <ShellContent ContentTemplate="{DataTemplate pages:DebtorsPage}" />
+    </FlyoutItem>
 </Shell>

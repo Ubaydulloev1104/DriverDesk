@@ -15,32 +15,34 @@ public partial class CustomerPage : ContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(NameEntry.Text))
+        var name = NameEntry.Text?.Trim();
+        var phone = PhoneEntry.Text?.Trim();
+
+        if (string.IsNullOrWhiteSpace(name))
         {
-            var customer = new Customer
-            {
-                Name = NameEntry.Text,
-                Phone = PhoneEntry.Text
-            };
-            await App.Database.SaveCustomerAsync(customer);
-
-            NameEntry.Text = string.Empty;
-            PhoneEntry.Text = string.Empty;
-
-            LoadCustomers();
+            await DisplayAlert("Ошибка", "Введите имя", "OK");
+            return;
         }
+
+        var customer = new Customer { Name = name, Phone = phone };
+        await App.Database.SaveCustomerAsync(customer);
+
+        NameEntry.Text = string.Empty;
+        PhoneEntry.Text = string.Empty;
+        LoadCustomers();
     }
 
-    private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+    private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (e.SelectedItem is Customer customer)
+        if (e.CurrentSelection.FirstOrDefault() is Customer customer)
         {
-            bool confirm = await DisplayAlert("Удалить?", $"Удалить {customer.Name}?", "Да", "Нет");
-            if (confirm)
+            bool del = await DisplayAlert("Удалить?", $"Удалить {customer.Name}?", "Да", "Нет");
+            if (del)
             {
-                await App.Database.DeleteCustomerAsync(customer); // нужно будет сделать метод для Customers
+                await App.Database.DeleteCustomerAsync(customer);
                 LoadCustomers();
             }
+            ((CollectionView)sender).SelectedItem = null;
         }
     }
 }

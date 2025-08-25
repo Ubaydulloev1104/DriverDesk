@@ -3,19 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DriverDesk.Pages.CustomerPage"
              Title="Добавить заказчика">
-    <VerticalStackLayout Padding="20" Spacing="15">
-
-        <Entry x:Name="NameEntry" Placeholder="Имя заказчика" />
-        <Entry x:Name="PhoneEntry" Placeholder="Телефон" Keyboard="Telephone" />
+    <VerticalStackLayout Padding="16" Spacing="12">
+        <Entry x:Name="NameEntry" Placeholder="Имя заказчика"/>
+        <Entry x:Name="PhoneEntry" Placeholder="Телефон" Keyboard="Telephone"/>
 
         <Button Text="Сохранить" Clicked="OnSaveClicked"/>
-        <ListView x:Name="CustomerList" ItemSelected="OnItemSelected">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextCell Text="{Binding Name}" Detail="{Binding Phone}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
 
+        <CollectionView x:Name="CustomerList" SelectionMode="Single" SelectionChanged="OnSelectionChanged">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="8" ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding Name}" />
+                        <Label Grid.Column="1" Text="{Binding Phone}" Margin="12,0,0,0"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </VerticalStackLayout>
 </ContentPage>
