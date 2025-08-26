@@ -78,7 +78,8 @@ public partial class OrdersPage : ContentPage
 
             OrdersView.ItemsSource = null;
             OrdersView.ItemsSource = _items;
-            UpdateStats();
+           
+            LoadData();
         }
     }
 
@@ -107,7 +108,8 @@ public partial class OrdersPage : ContentPage
 
             OrdersView.ItemsSource = null;
             OrdersView.ItemsSource = _items;
-            UpdateStats();
+          
+            LoadData();
         }
     }
 
