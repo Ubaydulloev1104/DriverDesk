@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Microsoft.Maui.ApplicationModel.Communication;
 
 namespace DriverDesk.Pages;
 
@@ -9,6 +10,7 @@ public partial class OrdersPage : ContentPage
     public OrdersPage()
     {
         InitializeComponent();
+        OrdersView.ItemsSource = _items;
         LoadData();
     }
 
@@ -18,7 +20,6 @@ public partial class OrdersPage : ContentPage
         var customers = await App.Database.GetCustomersAsync();
 
         var list = orders
-            .Where(o => !o.IsCompleted) // показываем активные
             .OrderBy(o => o.PickupDateTime)
             .Select(o =>
             {
@@ -28,6 +29,7 @@ public partial class OrdersPage : ContentPage
                     Id = o.Id,
                     CustomerId = o.CustomerId,
                     CustomerName = c?.Name ?? "Неизвестно",
+                    CustomerPhone = c?.Phone ?? "",
                     Description = o.Description,
                     PickupDateTime = o.PickupDateTime,
                     IsCompleted = o.IsCompleted,
@@ -36,8 +38,22 @@ public partial class OrdersPage : ContentPage
             })
             .ToList();
 
-        _items = new ObservableCollection<OrderVM>(list);
-        OrdersView.ItemsSource = _items;
+        _items.Clear();
+        foreach (var item in list)
+            _items.Add(item);
+
+        UpdateStats();
+    }
+
+    private void UpdateStats()
+    {
+        int total = _items.Count;
+        int completed = _items.Count(x => x.IsCompleted);
+        int pending = total - completed;
+
+        TotalOrdersLabel.Text = $"Всего: {total}";
+        CompletedOrdersLabel.Text = $"Выполнено: {completed}";
+        PendingOrdersLabel.Text = $"Не выполнено: {pending}";
     }
 
     private async void OnCompleteClicked(object sender, EventArgs e)
@@ -45,15 +61,7 @@ public partial class OrdersPage : ContentPage
         if (sender is Button btn && btn.BindingContext is OrderVM vm)
         {
             vm.IsCompleted = true;
-            await App.Database.UpdateOrderAsync(new Order
-            {
-                Id = vm.Id,
-                CustomerId = vm.CustomerId,
-                Description = vm.Description,
-                PickupDateTime = vm.PickupDateTime,
-                IsCompleted = vm.IsCompleted,
-                IsPaid = vm.IsPaid
-            });
+            await App.Database.UpdateOrderAsync(vm);
             LoadData();
         }
     }
@@ -69,21 +77,29 @@ public partial class OrdersPage : ContentPage
             }
 
             vm.IsPaid = true;
-            await App.Database.UpdateOrderAsync(new Order
-            {
-                Id = vm.Id,
-                CustomerId = vm.CustomerId,
-                Description = vm.Description,
-                PickupDateTime = vm.PickupDateTime,
-                IsCompleted = vm.IsCompleted,
-                IsPaid = vm.IsPaid
-            });
+            await App.Database.UpdateOrderAsync(vm);
             LoadData();
+        }
+    }
+
+    private void OnCallClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.BindingContext is OrderVM vm && !string.IsNullOrWhiteSpace(vm.CustomerPhone))
+        {
+            try
+            {
+                PhoneDialer.Open(vm.CustomerPhone);
+            }
+            catch
+            {
+                DisplayAlert("Ошибка", "Не удалось открыть телефон.", "OK");
+            }
         }
     }
 
     private class OrderVM : Order
     {
         public string CustomerName { get; set; } = "";
+        public string CustomerPhone { get; set; } = "";
     }
 }
