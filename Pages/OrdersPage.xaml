@@ -22,12 +22,32 @@
                             Margin="0,0,0,8"
                             StrokeShape="RoundRectangle 6">
                         <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+
                             <!-- Галочка выполнения -->
-                            <Label Text="{Binding IsCompleted, StringFormat='✔'}"
+                            <Label Grid.Column="0" 
+                                   Text="✔"
                                    FontSize="24"
                                    VerticalOptions="Center"
                                    HorizontalOptions="Start"
-                                   TextColor="Green"/>
+                                   TextColor="Green">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="False">
+                                        <Setter Property="IsVisible" Value="False"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <!-- Кнопка выполнено -->
+                            <Button Grid.Column="0"
+                                    Text="Выполнено"
+                                    Clicked="OnCompleteClicked"
+                                    Margin="0,0,8,0">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding IsCompleted}" Value="True">
+                                        <Setter Property="IsVisible" Value="False"/>
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
 
                             <!-- Имя клиента -->
                             <Label Grid.Column="1" Text="{Binding CustomerName}" FontAttributes="Bold"/>
@@ -40,9 +60,6 @@
 
                             <!-- Кнопка звонка -->
                             <Button Grid.Column="2" Grid.Row="2" Text="📞" Clicked="OnCallClicked" Margin="8,0"/>
-
-                            <!-- Кнопка выполнено -->
-                            <Button Grid.Column="3" Grid.Row="2" Text="Выполнено" Clicked="OnCompleteClicked" Margin="8,0"/>
 
                             <!-- Кнопка оплачено -->
                             <Button Grid.Column="4" Grid.Row="2" Text="Оплачено" Clicked="OnPaidClicked"/>
