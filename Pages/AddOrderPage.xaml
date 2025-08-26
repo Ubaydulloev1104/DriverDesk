@@ -6,36 +6,47 @@
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="16">
 
-            <!-- Существующий заказчик -->
-            <Frame BorderColor="LightGray" CornerRadius="10" Padding="12">
+            <!-- Выбор заказчика -->
+            <Border Stroke="LightGray" StrokeShape="RoundRectangle 10" Padding="12">
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Выберите заказчика" FontAttributes="Bold" FontSize="Medium"/>
-                    <Picker x:Name="CustomerPicker" Title="Список заказчиков" />
+                    <Label Text="Выберите или добавьте заказчика" FontAttributes="Bold" FontSize="Medium"/>
+                    <Button Text="Выбрать заказчика" 
+                            Clicked="OnSelectCustomerClicked"
+                            BackgroundColor="#4CAF50" 
+                            TextColor="White" 
+                            CornerRadius="8"/>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
-            <!-- Новый заказчик -->
-            <Frame BorderColor="LightGray" CornerRadius="10" Padding="12">
+            <!-- Новый или выбранный заказчик -->
+            <Border Stroke="LightGray" StrokeShape="RoundRectangle 10" Padding="12">
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Новый заказчик (если не в списке)" FontAttributes="Bold" FontSize="Medium"/>
                     <Entry x:Name="NewCustomerNameEntry" Placeholder="Имя заказчика" />
                     <Entry x:Name="NewCustomerPhoneEntry" Placeholder="Телефон" Keyboard="Telephone"/>
+                    <Button Text="Позвонить" 
+                            Clicked="OnCallClicked"
+                            BackgroundColor="#FF9800" 
+                            TextColor="White" 
+                            CornerRadius="8"/>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Детали заказа -->
-            <Frame BorderColor="LightGray" CornerRadius="10" Padding="12">
+            <Border Stroke="LightGray" StrokeShape="RoundRectangle 10" Padding="12">
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Детали заказа" FontAttributes="Bold" FontSize="Medium"/>
                     <Entry x:Name="DescriptionEntry" Placeholder="Описание: 1 штука / 1 рез полный ..." />
                     <DatePicker x:Name="DatePicker" />
                     <TimePicker x:Name="TimePicker" />
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
-            <Button Text="Сохранить заказ" Clicked="OnSaveClicked"
-                    BackgroundColor="#2196F3" TextColor="White"
-                    CornerRadius="8" HeightRequest="50"/>
+            <Button Text="Сохранить заказ" 
+                    Clicked="OnSaveClicked"
+                    BackgroundColor="#2196F3" 
+                    TextColor="White"
+                    CornerRadius="8" 
+                    HeightRequest="50"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

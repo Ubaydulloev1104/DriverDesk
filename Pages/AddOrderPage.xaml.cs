@@ -7,38 +7,76 @@ public partial class AddOrderPage : ContentPage
     public AddOrderPage()
     {
         InitializeComponent();
-        LoadCustomers();
-
         DatePicker.Date = DateTime.Today;
         TimePicker.Time = DateTime.Now.TimeOfDay;
     }
 
-    private async void LoadCustomers()
+    // Нажатие "Выбрать заказчика"
+    private async void OnSelectCustomerClicked(object sender, EventArgs e)
     {
         _customers = await App.Database.GetCustomersAsync();
-        CustomerPicker.ItemsSource = _customers;
-        CustomerPicker.ItemDisplayBinding = new Binding("Name");
+
+        // Открываем новую страницу (или DisplayActionSheet)
+        var names = _customers.Select(c => c.Name).ToArray();
+        string action = await DisplayActionSheet("Выберите заказчика", "Отмена", null, names);
+
+        if (!string.IsNullOrEmpty(action) && action != "Отмена")
+        {
+            var selectedCustomer = _customers.FirstOrDefault(c => c.Name == action);
+            if (selectedCustomer != null)
+            {
+                NewCustomerNameEntry.Text = selectedCustomer.Name;
+                NewCustomerPhoneEntry.Text = selectedCustomer.Phone;
+            }
+        }
     }
 
+    // Нажатие "Позвонить"
+    private async void OnCallClicked(object sender, EventArgs e)
+    {
+        var phone = NewCustomerPhoneEntry.Text?.Trim();
+        if (!string.IsNullOrEmpty(phone))
+        {
+            try
+            {
+                // Используем встроенный API для звонков
+                await Launcher.OpenAsync(new Uri($"tel:{phone}"));
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Ошибка", $"Не удалось открыть звонилку: {ex.Message}", "OK");
+            }
+        }
+        else
+        {
+            await DisplayAlert("Ошибка", "Введите номер телефона.", "OK");
+        }
+    }
+
+    // Сохранение заказа (оставляем почти без изменений)
     private async void OnSaveClicked(object sender, EventArgs e)
     {
-        Customer? customer = CustomerPicker.SelectedItem as Customer;
+        Customer? customer = null;
 
-        // Если заказчик не выбран, но введены данные нового
-        if (customer == null &&
-            !string.IsNullOrWhiteSpace(NewCustomerNameEntry.Text) &&
+        // Проверяем, есть ли данные в полях
+        if (!string.IsNullOrWhiteSpace(NewCustomerNameEntry.Text) &&
             !string.IsNullOrWhiteSpace(NewCustomerPhoneEntry.Text))
         {
-            customer = new Customer
+            // Ищем существующего заказчика
+            _customers = await App.Database.GetCustomersAsync();
+            customer = _customers.FirstOrDefault(c =>
+                c.Name == NewCustomerNameEntry.Text.Trim() &&
+                c.Phone == NewCustomerPhoneEntry.Text.Trim());
+
+            if (customer == null)
             {
-                Name = NewCustomerNameEntry.Text.Trim(),
-                Phone = NewCustomerPhoneEntry.Text.Trim()
-            };
-
-            await App.Database.SaveCustomerAsync(customer);
-
-            // Перезагружаем список и выбираем нового
-            await LoadCustomersAndSelect(customer);
+                customer = new Customer
+                {
+                    Name = NewCustomerNameEntry.Text.Trim(),
+                    Phone = NewCustomerPhoneEntry.Text.Trim()
+                };
+                await App.Database.SaveCustomerAsync(customer);
+            }
         }
 
         if (customer == null)
@@ -55,7 +93,6 @@ public partial class AddOrderPage : ContentPage
         }
 
         var pickup = DatePicker.Date + TimePicker.Time;
-
         var order = new Order
         {
             CustomerId = customer.Id,
@@ -66,21 +103,12 @@ public partial class AddOrderPage : ContentPage
         };
 
         await App.Database.SaveOrderAsync(order);
-
         await DisplayAlert("Готово", "Заказ сохранён.", "OK");
         ClearForm();
     }
 
-    private async Task LoadCustomersAndSelect(Customer newCustomer)
-    {
-        _customers = await App.Database.GetCustomersAsync();
-        CustomerPicker.ItemsSource = _customers;
-        CustomerPicker.SelectedItem = _customers.FirstOrDefault(c => c.Id == newCustomer.Id);
-    }
-
     private void ClearForm()
     {
-        CustomerPicker.SelectedItem = null;
         NewCustomerNameEntry.Text = string.Empty;
         NewCustomerPhoneEntry.Text = string.Empty;
         DescriptionEntry.Text = string.Empty;
