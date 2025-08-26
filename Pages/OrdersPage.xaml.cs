@@ -60,6 +60,8 @@ public partial class OrdersPage : ContentPage
     {
         if (sender is Button btn && btn.BindingContext is OrderVM vm)
         {
+            if (vm.IsCompleted) return; // если уже отмечено, не трогаем
+
             vm.IsCompleted = true;
 
             // Обновляем только объект Order для SQLite
@@ -74,7 +76,7 @@ public partial class OrdersPage : ContentPage
             };
 
             await App.Database.UpdateOrderAsync(order);
-            LoadData();
+            LoadData();// обновляем табло без перезагрузки списка
         }
     }
 
@@ -101,7 +103,6 @@ public partial class OrdersPage : ContentPage
             };
 
             await App.Database.UpdateOrderAsync(order);
-            LoadData();
         }
     }
 
@@ -120,7 +121,6 @@ public partial class OrdersPage : ContentPage
         }
     }
 
-    // Вспомогательный класс для отображения
     private class OrderVM
     {
         public int Id { get; set; }

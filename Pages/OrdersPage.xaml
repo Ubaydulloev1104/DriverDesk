@@ -21,24 +21,31 @@
                             Padding="10"
                             Margin="0,0,0,8"
                             StrokeShape="RoundRectangle 6">
-                        <Grid ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <!-- Галочка выполнения -->
+                            <Label Text="{Binding IsCompleted, StringFormat='✔'}"
+                                   FontSize="24"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start"
+                                   TextColor="Green"/>
+
                             <!-- Имя клиента -->
-                            <Label Text="{Binding CustomerName}" FontAttributes="Bold"/>
+                            <Label Grid.Column="1" Text="{Binding CustomerName}" FontAttributes="Bold"/>
 
                             <!-- Телефон клиента -->
-                            <Label Grid.Row="1" Text="{Binding CustomerPhone}" FontAttributes="Italic" TextColor="Blue"/>
+                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding CustomerPhone}" FontAttributes="Italic" TextColor="Blue"/>
 
                             <!-- Описание заказа -->
-                            <Label Grid.Row="2" Text="{Binding Description}" />
+                            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Description}" />
 
                             <!-- Кнопка звонка -->
-                            <Button Grid.Column="1" Grid.Row="2" Text="📞" Clicked="OnCallClicked" Margin="8,0"/>
+                            <Button Grid.Column="2" Grid.Row="2" Text="📞" Clicked="OnCallClicked" Margin="8,0"/>
 
                             <!-- Кнопка выполнено -->
-                            <Button Grid.Column="2" Grid.Row="2" Text="Выполнено" Clicked="OnCompleteClicked" Margin="8,0"/>
+                            <Button Grid.Column="3" Grid.Row="2" Text="Выполнено" Clicked="OnCompleteClicked" Margin="8,0"/>
 
                             <!-- Кнопка оплачено -->
-                            <Button Grid.Column="3" Grid.Row="2" Text="Оплачено" Clicked="OnPaidClicked"/>
+                            <Button Grid.Column="4" Grid.Row="2" Text="Оплачено" Clicked="OnPaidClicked"/>
                         </Grid>
                     </Border>
                 </DataTemplate>
