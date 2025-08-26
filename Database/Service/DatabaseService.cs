@@ -16,7 +16,7 @@ public class DatabaseService
         _database.Table<Customer>().ToListAsync();
 
     public Task<int> SaveCustomerAsync(Customer customer) =>
-        _database.InsertOrReplaceAsync(customer);
+        _database.InsertAsync(customer);
     public Task<int> UpdateCustomerAsync(Customer customer) => _database.UpdateAsync(customer);
     public Task<int> DeleteCustomerAsync(Customer customer) => _database.DeleteAsync(customer);
 
@@ -25,7 +25,7 @@ public class DatabaseService
         _database.Table<Order>().ToListAsync();
 
     public Task<int> SaveOrderAsync(Order order) =>
-        _database.InsertOrReplaceAsync(order);
+        _database.InsertAsync(order);
 
     public Task<int> DeleteOrderAsync(Order order) =>
         _database.DeleteAsync(order);
