@@ -1,4 +1,3 @@
-
 namespace DriverDesk.Pages;
 
 public partial class AddOrderPage : ContentPage
@@ -23,16 +22,35 @@ public partial class AddOrderPage : ContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
-        if (CustomerPicker.SelectedItem is not Customer customer)
+        Customer? customer = CustomerPicker.SelectedItem as Customer;
+
+        // Если заказчик не выбран, но введены данные нового
+        if (customer == null &&
+            !string.IsNullOrWhiteSpace(NewCustomerNameEntry.Text) &&
+            !string.IsNullOrWhiteSpace(NewCustomerPhoneEntry.Text))
         {
-            await DisplayAlert("Ошибка", "Выберите заказчика", "OK");
+            customer = new Customer
+            {
+                Name = NewCustomerNameEntry.Text.Trim(),
+                Phone = NewCustomerPhoneEntry.Text.Trim()
+            };
+
+            await App.Database.SaveCustomerAsync(customer);
+
+            // Перезагружаем список и выбираем нового
+            await LoadCustomersAndSelect(customer);
+        }
+
+        if (customer == null)
+        {
+            await DisplayAlert("Ошибка", "Выберите заказчика или введите нового.", "OK");
             return;
         }
 
         var desc = DescriptionEntry.Text?.Trim();
         if (string.IsNullOrWhiteSpace(desc))
         {
-            await DisplayAlert("Ошибка", "Введите описание заказа", "OK");
+            await DisplayAlert("Ошибка", "Введите описание заказа.", "OK");
             return;
         }
 
@@ -48,10 +66,23 @@ public partial class AddOrderPage : ContentPage
         };
 
         await App.Database.SaveOrderAsync(order);
-        await DisplayAlert("Готово", "Заказ сохранён", "OK");
 
-        // Очистка
+        await DisplayAlert("Готово", "Заказ сохранён.", "OK");
+        ClearForm();
+    }
+
+    private async Task LoadCustomersAndSelect(Customer newCustomer)
+    {
+        _customers = await App.Database.GetCustomersAsync();
+        CustomerPicker.ItemsSource = _customers;
+        CustomerPicker.SelectedItem = _customers.FirstOrDefault(c => c.Id == newCustomer.Id);
+    }
+
+    private void ClearForm()
+    {
         CustomerPicker.SelectedItem = null;
+        NewCustomerNameEntry.Text = string.Empty;
+        NewCustomerPhoneEntry.Text = string.Empty;
         DescriptionEntry.Text = string.Empty;
         DatePicker.Date = DateTime.Today;
         TimePicker.Time = DateTime.Now.TimeOfDay;

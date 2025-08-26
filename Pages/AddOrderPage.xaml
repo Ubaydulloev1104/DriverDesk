@@ -1,14 +1,41 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DriverDesk.Pages.AddOrderPage"
              Title="Добавить заказ">
-    <VerticalStackLayout Padding="16" Spacing="12">
-        <Picker x:Name="CustomerPicker" Title="Выберите заказчика" />
-        <Entry x:Name="DescriptionEntry" Placeholder="Описание: 1 штука / 1 рез полный ..."/>
-        <DatePicker x:Name="DatePicker" />
-        <TimePicker x:Name="TimePicker" />
 
-        <Button Text="Сохранить заказ" Clicked="OnSaveClicked"/>
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <!-- Существующий заказчик -->
+            <Frame BorderColor="LightGray" CornerRadius="10" Padding="12">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Выберите заказчика" FontAttributes="Bold" FontSize="Medium"/>
+                    <Picker x:Name="CustomerPicker" Title="Список заказчиков" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Новый заказчик -->
+            <Frame BorderColor="LightGray" CornerRadius="10" Padding="12">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Новый заказчик (если не в списке)" FontAttributes="Bold" FontSize="Medium"/>
+                    <Entry x:Name="NewCustomerNameEntry" Placeholder="Имя заказчика" />
+                    <Entry x:Name="NewCustomerPhoneEntry" Placeholder="Телефон" Keyboard="Telephone"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Детали заказа -->
+            <Frame BorderColor="LightGray" CornerRadius="10" Padding="12">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Детали заказа" FontAttributes="Bold" FontSize="Medium"/>
+                    <Entry x:Name="DescriptionEntry" Placeholder="Описание: 1 штука / 1 рез полный ..." />
+                    <DatePicker x:Name="DatePicker" />
+                    <TimePicker x:Name="TimePicker" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button Text="Сохранить заказ" Clicked="OnSaveClicked"
+                    BackgroundColor="#2196F3" TextColor="White"
+                    CornerRadius="8" HeightRequest="50"/>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
