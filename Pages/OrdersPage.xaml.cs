@@ -1,16 +1,17 @@
 using System.Collections.ObjectModel;
 using Microsoft.Maui.ApplicationModel.Communication;
+using Microsoft.Maui.Graphics;
 
 namespace DriverDesk.Pages;
 
 public partial class OrdersPage : ContentPage
 {
-    private ObservableCollection<OrderVM> _items = new();
+    public ObservableCollection<OrderVM> Orders { get; set; } = new();
 
     public OrdersPage()
     {
         InitializeComponent();
-        OrdersView.ItemsSource = _items;
+        BindingContext = this;
         LoadData();
     }
 
@@ -38,17 +39,17 @@ public partial class OrdersPage : ContentPage
             })
             .ToList();
 
-        _items.Clear();
+        Orders.Clear();
         foreach (var item in list)
-            _items.Add(item);
+            Orders.Add(item);
 
         UpdateStats();
     }
 
     private void UpdateStats()
     {
-        int total = _items.Count;
-        int completed = _items.Count(x => x.IsCompleted);
+        int total = Orders.Count;
+        int completed = Orders.Count(x => x.IsCompleted);
         int pending = total - completed;
 
         TotalOrdersLabel.Text = $"Всего: {total}";
@@ -61,8 +62,8 @@ public partial class OrdersPage : ContentPage
         if (sender is Button btn && btn.BindingContext is OrderVM vm)
         {
             vm.IsCompleted = true;
+            vm.UpdateBackground();
 
-            // Обновляем в базе данных
             await App.Database.UpdateOrderAsync(new Order
             {
                 Id = vm.Id,
@@ -73,7 +74,6 @@ public partial class OrdersPage : ContentPage
                 IsPaid = vm.IsPaid
             });
 
-            // Обновляем интерфейс без перезагрузки всего списка
             UpdateStats();
         }
     }
@@ -89,6 +89,7 @@ public partial class OrdersPage : ContentPage
             }
 
             vm.IsPaid = true;
+            vm.UpdateBackground();
 
             await App.Database.UpdateOrderAsync(new Order
             {
@@ -119,8 +120,7 @@ public partial class OrdersPage : ContentPage
         }
     }
 
-    // Вспомогательный класс для отображения
-    private class OrderVM
+    public class OrderVM
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
@@ -130,5 +130,17 @@ public partial class OrdersPage : ContentPage
         public DateTime PickupDateTime { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsPaid { get; set; }
+
+        public Color BackgroundColor { get; set; } = Colors.White;
+
+        public void UpdateBackground()
+        {
+            if (IsCompleted && IsPaid)
+                BackgroundColor = Colors.LightGreen;
+            else if (IsCompleted)
+                BackgroundColor = Colors.LightYellow;
+            else
+                BackgroundColor = Colors.White;
+        }
     }
 }
