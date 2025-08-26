@@ -13,7 +13,7 @@
         </HorizontalStackLayout>
 
         <!-- Список заказов -->
-        <CollectionView x:Name="OrdersView" ItemsSource="{Binding Orders}">
+        <CollectionView x:Name="OrdersView">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border Stroke="LightGray"
@@ -22,23 +22,15 @@
                             Margin="0,0,0,8"
                             StrokeShape="RoundRectangle 6"
                             BackgroundColor="{Binding BackgroundColor}">
-                        <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
 
                             <!-- Галочка выполнения -->
-                            <Label Grid.Column="0" 
-                                   Text="✔"
+                            <Label Text="✔"
                                    FontSize="24"
                                    VerticalOptions="Center"
                                    HorizontalOptions="Start"
                                    TextColor="Green"
                                    IsVisible="{Binding IsCompleted}"/>
-
-                            <!-- Кнопка выполнено -->
-                            <Button Grid.Column="0"
-                                    Text="Выполнено"
-                                    Clicked="OnCompleteClicked"
-                                    Margin="0,0,8,0"
-                                    IsVisible="{Binding IsCompleted, Converter={StaticResource InverseBoolConverter}}"/>
 
                             <!-- Имя клиента -->
                             <Label Grid.Column="1" Text="{Binding CustomerName}" FontAttributes="Bold"/>
@@ -49,12 +41,13 @@
                             <!-- Описание заказа -->
                             <Label Grid.Row="2" Grid.Column="1" Text="{Binding Description}" />
 
-                            <!-- Кнопка звонка -->
-                            <Button Grid.Column="2" Grid.Row="2" Text="📞" Clicked="OnCallClicked" Margin="8,0"/>
+                            <!-- Кнопка выполнено -->
+                            <Button Grid.Column="2" Grid.Row="2" Text="Выполнено" Clicked="OnCompleteClicked"
+                                    IsVisible="{Binding ShowCompleteButton}" Margin="8,0"/>
 
                             <!-- Кнопка оплачено -->
-                            <Button Grid.Column="4" Grid.Row="2" Text="Оплачено" Clicked="OnPaidClicked"
-                                    IsVisible="{Binding IsPaid, Converter={StaticResource InverseBoolConverter}}"/>
+                            <Button Grid.Column="3" Grid.Row="2" Text="Оплачено" Clicked="OnPaidClicked"
+                                    IsVisible="{Binding ShowPaidButton}"/>
                         </Grid>
                     </Border>
                 </DataTemplate>

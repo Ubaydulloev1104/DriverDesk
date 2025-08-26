@@ -6,12 +6,12 @@ namespace DriverDesk.Pages;
 
 public partial class OrdersPage : ContentPage
 {
-    public ObservableCollection<OrderVM> Orders { get; set; } = new();
+    private ObservableCollection<OrderVM> _items = new();
 
     public OrdersPage()
     {
         InitializeComponent();
-        BindingContext = this;
+        OrdersView.ItemsSource = _items;
         LoadData();
     }
 
@@ -25,7 +25,7 @@ public partial class OrdersPage : ContentPage
             .Select(o =>
             {
                 var c = customers.FirstOrDefault(x => x.Id == o.CustomerId);
-                return new OrderVM
+                var vm = new OrderVM
                 {
                     Id = o.Id,
                     CustomerId = o.CustomerId,
@@ -36,20 +36,22 @@ public partial class OrdersPage : ContentPage
                     IsCompleted = o.IsCompleted,
                     IsPaid = o.IsPaid
                 };
+                vm.UpdateProperties();
+                return vm;
             })
             .ToList();
 
-        Orders.Clear();
+        _items.Clear();
         foreach (var item in list)
-            Orders.Add(item);
+            _items.Add(item);
 
         UpdateStats();
     }
 
     private void UpdateStats()
     {
-        int total = Orders.Count;
-        int completed = Orders.Count(x => x.IsCompleted);
+        int total = _items.Count;
+        int completed = _items.Count(x => x.IsCompleted);
         int pending = total - completed;
 
         TotalOrdersLabel.Text = $"Всего: {total}";
@@ -62,7 +64,7 @@ public partial class OrdersPage : ContentPage
         if (sender is Button btn && btn.BindingContext is OrderVM vm)
         {
             vm.IsCompleted = true;
-            vm.UpdateBackground();
+            vm.UpdateProperties();
 
             await App.Database.UpdateOrderAsync(new Order
             {
@@ -74,6 +76,8 @@ public partial class OrdersPage : ContentPage
                 IsPaid = vm.IsPaid
             });
 
+            OrdersView.ItemsSource = null;
+            OrdersView.ItemsSource = _items;
             UpdateStats();
         }
     }
@@ -89,7 +93,7 @@ public partial class OrdersPage : ContentPage
             }
 
             vm.IsPaid = true;
-            vm.UpdateBackground();
+            vm.UpdateProperties();
 
             await App.Database.UpdateOrderAsync(new Order
             {
@@ -101,6 +105,8 @@ public partial class OrdersPage : ContentPage
                 IsPaid = vm.IsPaid
             });
 
+            OrdersView.ItemsSource = null;
+            OrdersView.ItemsSource = _items;
             UpdateStats();
         }
     }
@@ -109,14 +115,8 @@ public partial class OrdersPage : ContentPage
     {
         if (sender is Button btn && btn.BindingContext is OrderVM vm && !string.IsNullOrWhiteSpace(vm.CustomerPhone))
         {
-            try
-            {
-                PhoneDialer.Open(vm.CustomerPhone);
-            }
-            catch
-            {
-                DisplayAlert("Ошибка", "Не удалось открыть телефон.", "OK");
-            }
+            try { PhoneDialer.Open(vm.CustomerPhone); }
+            catch { DisplayAlert("Ошибка", "Не удалось открыть телефон.", "OK"); }
         }
     }
 
@@ -131,10 +131,15 @@ public partial class OrdersPage : ContentPage
         public bool IsCompleted { get; set; }
         public bool IsPaid { get; set; }
 
+        public bool ShowCompleteButton { get; set; } = true;
+        public bool ShowPaidButton { get; set; } = true;
         public Color BackgroundColor { get; set; } = Colors.White;
 
-        public void UpdateBackground()
+        public void UpdateProperties()
         {
+            ShowCompleteButton = !IsCompleted;
+            ShowPaidButton = IsCompleted ? !IsPaid : false;
+
             if (IsCompleted && IsPaid)
                 BackgroundColor = Colors.LightGreen;
             else if (IsCompleted)
