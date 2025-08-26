@@ -61,7 +61,19 @@ public partial class OrdersPage : ContentPage
         if (sender is Button btn && btn.BindingContext is OrderVM vm)
         {
             vm.IsCompleted = true;
-            await App.Database.UpdateOrderAsync(vm);
+
+            // Обновляем только объект Order для SQLite
+            var order = new Order
+            {
+                Id = vm.Id,
+                CustomerId = vm.CustomerId,
+                Description = vm.Description,
+                PickupDateTime = vm.PickupDateTime,
+                IsCompleted = vm.IsCompleted,
+                IsPaid = vm.IsPaid
+            };
+
+            await App.Database.UpdateOrderAsync(order);
             LoadData();
         }
     }
@@ -77,7 +89,18 @@ public partial class OrdersPage : ContentPage
             }
 
             vm.IsPaid = true;
-            await App.Database.UpdateOrderAsync(vm);
+
+            var order = new Order
+            {
+                Id = vm.Id,
+                CustomerId = vm.CustomerId,
+                Description = vm.Description,
+                PickupDateTime = vm.PickupDateTime,
+                IsCompleted = vm.IsCompleted,
+                IsPaid = vm.IsPaid
+            };
+
+            await App.Database.UpdateOrderAsync(order);
             LoadData();
         }
     }
@@ -97,9 +120,16 @@ public partial class OrdersPage : ContentPage
         }
     }
 
-    private class OrderVM : Order
+    // Вспомогательный класс для отображения
+    private class OrderVM
     {
+        public int Id { get; set; }
+        public int CustomerId { get; set; }
         public string CustomerName { get; set; } = "";
         public string CustomerPhone { get; set; } = "";
+        public string Description { get; set; } = "";
+        public DateTime PickupDateTime { get; set; }
+        public bool IsCompleted { get; set; }
+        public bool IsPaid { get; set; }
     }
 }
