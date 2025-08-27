@@ -2,11 +2,58 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DriverDesk.Pages.HistoryPage"
-             Title="HistoryPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+             Title="История заказов">
+
+    <VerticalStackLayout Padding="10">
+
+        <!-- Вкладки -->
+        <HorizontalStackLayout Spacing="10">
+            <Button Text="Все заказы"
+                    Clicked="OnAllOrdersTabClicked" />
+            <Button Text="Завершённые"
+                    Clicked="OnCompletedOrdersTabClicked" />
+        </HorizontalStackLayout>
+
+        <!-- Поиск -->
+        <SearchBar x:Name="SearchBar"
+                   Placeholder="Поиск по клиенту..."
+                   TextChanged="OnSearchTextChanged" />
+
+        <!-- Список заказов -->
+        <CollectionView x:Name="OrdersCollectionView"
+                        IsGrouped="True">
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding Key}"
+                           FontAttributes="Bold"
+                           FontSize="Medium"
+                           Padding="5,0" />
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="5" Margin="0,2"
+                           BorderColor="LightGray"
+                           HasShadow="False">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding CustomerName}"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding Description}" />
+                            <Label Text="{Binding OrderDate, StringFormat='{0:HH:mm}'}"
+                                   FontSize="Small"
+                                   TextColor="Gray" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Счётчик -->
+        <Label x:Name="TotalCountLabel"
+               FontAttributes="Bold"
+               FontSize="Medium"
+               HorizontalOptions="End"
+               Padding="0,5" />
+
     </VerticalStackLayout>
 </ContentPage>
