@@ -1,17 +1,15 @@
 using System.Collections.ObjectModel;
-using Microsoft.Maui.ApplicationModel.Communication;
-using Microsoft.Maui.Graphics;
 
 namespace DriverDesk.Pages;
 
 public partial class OrdersPage : ContentPage
 {
-    private ObservableCollection<OrderVM> _items = new();
+    private ObservableCollection<OrderGroup> _groups = new();
 
     public OrdersPage()
     {
         InitializeComponent();
-        OrdersView.ItemsSource = _items;
+        OrdersView.ItemsSource = _groups;
         LoadData();
     }
 
@@ -19,9 +17,16 @@ public partial class OrdersPage : ContentPage
     {
         var orders = await App.Database.GetOrdersAsync();
         var customers = await App.Database.GetCustomersAsync();
+        var now = DateTime.Now;
 
-        var list = orders
-            .OrderBy(o => o.PickupDateTime)
+        // Фильтруем
+        var filtered = orders
+            .Where(o =>
+            {
+                if (o.IsCompleted && o.IsPaid) return false;
+                if (o.IsCompleted && !o.IsPaid && (now - o.PickupDateTime).TotalHours > 12) return false;
+                return true;
+            })
             .Select(o =>
             {
                 var c = customers.FirstOrDefault(x => x.Id == o.CustomerId);
@@ -39,24 +44,28 @@ public partial class OrdersPage : ContentPage
                 vm.UpdateProperties();
                 return vm;
             })
+            .OrderBy(o => o.PickupDateTime)
             .ToList();
 
-        _items.Clear();
-        foreach (var item in list)
-            _items.Add(item);
+        // Группируем по дате
+        var grouped = filtered
+            .GroupBy(o => o.PickupDateTime.Date)
+            .OrderBy(g => g.Key)
+            .Select(g => new OrderGroup(g.Key, new ObservableCollection<OrderVM>(g)))
+            .ToList();
 
-        UpdateStats();
+        _groups.Clear();
+        foreach (var group in grouped) _groups.Add(group);
+
+        UpdateStats(filtered);
     }
 
-    private void UpdateStats()
+    private void UpdateStats(List<OrderVM> list)
     {
-        int total = _items.Count;
-        int completed = _items.Count(x => x.IsCompleted);
+        int total = list.Count;
+        int completed = list.Count(x => x.IsCompleted);
         int pending = total - completed;
-
-        TotalOrdersLabel.Text = $"Всего: {total}";
-        CompletedOrdersLabel.Text = $"Выполнено: {completed}";
-        PendingOrdersLabel.Text = $"Не выполнено: {pending}";
+      
     }
 
     private async void OnCompleteClicked(object sender, EventArgs e)
@@ -65,7 +74,6 @@ public partial class OrdersPage : ContentPage
         {
             vm.IsCompleted = true;
             vm.UpdateProperties();
-
             await App.Database.UpdateOrderAsync(new Order
             {
                 Id = vm.Id,
@@ -75,10 +83,6 @@ public partial class OrdersPage : ContentPage
                 IsCompleted = vm.IsCompleted,
                 IsPaid = vm.IsPaid
             });
-
-            OrdersView.ItemsSource = null;
-            OrdersView.ItemsSource = _items;
-           
             LoadData();
         }
     }
@@ -92,10 +96,8 @@ public partial class OrdersPage : ContentPage
                 await DisplayAlert("Ошибка", "Сначала отметьте заказ как выполненный", "OK");
                 return;
             }
-
             vm.IsPaid = true;
             vm.UpdateProperties();
-
             await App.Database.UpdateOrderAsync(new Order
             {
                 Id = vm.Id,
@@ -105,20 +107,43 @@ public partial class OrdersPage : ContentPage
                 IsCompleted = vm.IsCompleted,
                 IsPaid = vm.IsPaid
             });
-
-            OrdersView.ItemsSource = null;
-            OrdersView.ItemsSource = _items;
-          
             LoadData();
         }
     }
 
-    private void OnCallClicked(object sender, EventArgs e)
+    private async void OnDeleteClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.BindingContext is OrderVM vm)
+        {
+            bool confirm = await DisplayAlert("Удаление",
+                $"Удалить заказ '{vm.Description}'?",
+                "Да", "Нет");
+
+            if (confirm)
+            {
+                await App.Database.DeleteOrderAsync(vm.Id);
+                LoadData();
+            }
+        }
+    }
+
+
+
+   
+    private async void OnCallClicked(object sender, EventArgs e)
     {
         if (sender is Button btn && btn.BindingContext is OrderVM vm && !string.IsNullOrWhiteSpace(vm.CustomerPhone))
         {
-            try { PhoneDialer.Open(vm.CustomerPhone); }
-            catch { DisplayAlert("Ошибка", "Не удалось открыть телефон.", "OK"); }
+           await Launcher.OpenAsync(new Uri($"tel:{vm.CustomerPhone}"));   
+        }
+    }
+
+    public class OrderGroup : ObservableCollection<OrderVM>
+    {
+        public DateTime Key { get; }
+        public OrderGroup(DateTime key, ObservableCollection<OrderVM> items) : base(items)
+        {
+            Key = key;
         }
     }
 
@@ -132,15 +157,16 @@ public partial class OrdersPage : ContentPage
         public DateTime PickupDateTime { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsPaid { get; set; }
-
-        public bool ShowCompleteButton { get; set; } = true;
-        public bool ShowPaidButton { get; set; } = true;
+        public bool ShowCompleteButton { get; set; }
+        public bool ShowPaidButton { get; set; }
+        public bool ShowDeleteButton { get; set; }
         public Color BackgroundColor { get; set; } = Colors.White;
 
         public void UpdateProperties()
         {
             ShowCompleteButton = !IsCompleted;
-            ShowPaidButton = IsCompleted ? !IsPaid : false;
+            ShowPaidButton = IsCompleted && !IsPaid;
+            ShowDeleteButton = !IsCompleted && !IsPaid;
 
             if (IsCompleted && IsPaid)
                 BackgroundColor = Colors.LightGreen;

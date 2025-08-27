@@ -19,6 +19,14 @@ public class DatabaseService
         _database.InsertAsync(customer);
     public Task<int> UpdateCustomerAsync(Customer customer) => _database.UpdateAsync(customer);
     public Task<int> DeleteCustomerAsync(Customer customer) => _database.DeleteAsync(customer);
+    public Task<int> DeleteCustomerAsync(int customerId)
+    {
+        return _database.Table<Customer>()
+            .Where(c => c.Id == customerId)
+            .DeleteAsync();
+    }
+
+    
 
     // Orders
     public Task<List<Order>> GetOrdersAsync() =>
@@ -26,7 +34,12 @@ public class DatabaseService
 
     public Task<int> SaveOrderAsync(Order order) =>
         _database.InsertAsync(order);
-
+    public Task<int> DeleteOrderAsync(int orderId)
+    {
+        return _database.Table<Order>()
+            .Where(o => o.Id == orderId)
+            .DeleteAsync();
+    }
     public Task<int> DeleteOrderAsync(Order order) =>
         _database.DeleteAsync(order);
     public Task<int> UpdateOrderAsync(Order order) => _database.UpdateAsync(order);
@@ -35,4 +48,5 @@ public class DatabaseService
         .Where(o => o.PickupDateTime.Date == date.Date)
         .OrderBy(o => o.PickupDateTime)
         .ToListAsync();
+
 }
