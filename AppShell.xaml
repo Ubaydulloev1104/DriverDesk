@@ -22,7 +22,9 @@
     <FlyoutItem Title="Заказчики">
         <ShellContent ContentTemplate="{DataTemplate pages:CustomerPage}" />
     </FlyoutItem>
-
+    <FlyoutItem Title="Должники">
+        <ShellContent ContentTemplate="{DataTemplate pages:HistoryPage}" />
+    </FlyoutItem>
     <FlyoutItem Title="Должники">
         <ShellContent ContentTemplate="{DataTemplate pages:DebtorsPage}" />
     </FlyoutItem>
