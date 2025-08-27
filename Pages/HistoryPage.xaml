@@ -1,59 +1,91 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DriverDesk.Pages.HistoryPage"
-             Title="История заказов">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="DriverDesk.Pages.HistoryPage"
+    Title="История заказов">
 
-    <VerticalStackLayout Padding="10">
+    <VerticalStackLayout Padding="12" Spacing="10">
 
         <!-- Вкладки -->
-        <HorizontalStackLayout Spacing="10">
-            <Button Text="Все заказы"
-                    Clicked="OnAllOrdersTabClicked" />
-            <Button Text="Завершённые"
+        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+            <Button x:Name="AllOrdersButton"
+                    Text="Все"
+                    Clicked="OnAllOrdersTabClicked"
+                    BackgroundColor="#e0e0e0" />
+            <Button x:Name="CompletedOrdersButton"
+                    Text="Завершённые"
                     Clicked="OnCompletedOrdersTabClicked" />
         </HorizontalStackLayout>
 
         <!-- Поиск -->
         <SearchBar x:Name="SearchBar"
-                   Placeholder="Поиск по клиенту..."
-                   TextChanged="OnSearchTextChanged" />
+                   Placeholder="Поиск по имени клиента..."
+                   TextChanged="OnSearchTextChanged"/>
 
-        <!-- Список заказов -->
+        <!-- Список заказов (группированный) -->
         <CollectionView x:Name="OrdersCollectionView"
-                        IsGrouped="True">
+                        IsGrouped="True"
+                        SelectionMode="None"
+                        Margin="0,4"
+                        VerticalOptions="FillAndExpand">
+
+            <!-- Заголовок группы: дата + кол-во -->
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate>
-                    <Label Text="{Binding Key}"
-                           FontAttributes="Bold"
-                           FontSize="Medium"
-                           Padding="5,0" />
+                    <Frame BackgroundColor="#f0f6ff"
+                           CornerRadius="8"
+                           Padding="8"
+                           Margin="0,6,0,4"
+                           HasShadow="False">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="{Binding Key}" FontAttributes="Bold" FontSize="16" />
+                            <Label Grid.Column="1" Text="{Binding Count, StringFormat='Всего: {0}'}"
+                                   FontSize="14" TextColor="Gray" HorizontalOptions="End" />
+                        </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.GroupHeaderTemplate>
+
+            <!-- Элемент заказа -->
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Padding="5" Margin="0,2"
+                    <Frame Padding="10" Margin="0,4"
+                           CornerRadius="10"
                            BorderColor="LightGray"
-                           HasShadow="False">
-                        <VerticalStackLayout>
-                            <Label Text="{Binding CustomerName}"
-                                   FontAttributes="Bold" />
-                            <Label Text="{Binding Description}" />
-                            <Label Text="{Binding OrderDate, StringFormat='{0:HH:mm}'}"
-                                   FontSize="Small"
-                                   TextColor="Gray" />
-                        </VerticalStackLayout>
+                           HasShadow="True"
+                           BackgroundColor="{Binding BackgroundColor}">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="{Binding CustomerName}" FontAttributes="Bold" FontSize="16"/>
+                                <Label Text="{Binding CustomerPhone}" FontSize="13" TextColor="Gray"/>
+                                <Label Text="{Binding Description}" FontSize="14"/>
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding PickupDateTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" FontSize="12" TextColor="DarkBlue"/>
+                                    <Label Text="{Binding StatusText}" TextColor="{Binding StatusColor}" FontSize="12" FontAttributes="Italic"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+
+                            <!-- Действия справа (по желанию можно добавить кнопки) -->
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="6">
+                                <!-- Здесь можно добавлять кнопки звонка/удаления и т.д. -->
+                            </VerticalStackLayout>
+                        </Grid>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Счётчик -->
+        <!-- Нижний счётчик -->
         <Label x:Name="TotalCountLabel"
+               Text="Всего заказов: 0"
                FontAttributes="Bold"
-               FontSize="Medium"
                HorizontalOptions="End"
-               Padding="0,5" />
-
+               Margin="0,6,0,0"/>
     </VerticalStackLayout>
 </ContentPage>
