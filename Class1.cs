@@ -8,5 +8,6 @@ namespace DriverDesk
 {
     internal class Class1
     {
+        public int dd; 
     }
 }
