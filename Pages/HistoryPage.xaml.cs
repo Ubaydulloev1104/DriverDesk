@@ -104,25 +104,53 @@ public partial class HistoryPage : ContentPage
         }
     }
 
+    // Жест pinch
     private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
     {
         if (e.Status == GestureStatus.Running)
         {
             double scale = currentFontScale * e.Scale;
-            foreach (var group in GroupedOrders)
-                foreach (var item in group)
-                    item.FontSize = 14 * scale;
-
-            OrdersCollectionView.ItemsSource = null;
-            OrdersCollectionView.ItemsSource = GroupedOrders;
+            UpdateFontSizes(scale);
         }
         else if (e.Status == GestureStatus.Completed)
         {
             currentFontScale *= e.Scale;
         }
     }
+
+    // Кнопка "+"
+    private void OnZoomInClicked(object sender, EventArgs e)
+    {
+        currentFontScale *= 1.1;
+        UpdateFontSizes(currentFontScale);
+    }
+
+    // Кнопка "-"
+    private void OnZoomOutClicked(object sender, EventArgs e)
+    {
+        currentFontScale /= 1.1;
+        UpdateFontSizes(currentFontScale);
+    }
+
+    // Сброс масштаба
+    private void OnResetZoomClicked(object sender, EventArgs e)
+    {
+        currentFontScale = 1.0;
+        UpdateFontSizes(currentFontScale);
+    }
+
+    private void UpdateFontSizes(double scale)
+    {
+        foreach (var group in GroupedOrders)
+            foreach (var item in group)
+                item.FontSize = 14 * scale;
+
+        OrdersCollectionView.ItemsSource = null;
+        OrdersCollectionView.ItemsSource = GroupedOrders;
+    }
 }
 
+// ViewModel
 public class OrderVM : INotifyPropertyChanged
 {
     private double fontSize = 14;
@@ -168,6 +196,7 @@ public class OrderVM : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
 
+// Группировка
 public class Grouping<K, T> : ObservableCollection<T>
 {
     public K Key { get; }
