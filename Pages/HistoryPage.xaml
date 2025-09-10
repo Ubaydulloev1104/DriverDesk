@@ -5,110 +5,98 @@
     x:Class="DriverDesk.Pages.HistoryPage"
     Title="История заказов">
 
-    <ScrollView>
-        <Grid RowDefinitions="Auto, Auto, *" Padding="12" RowSpacing="10">
-            <!-- Вкладки -->
-            <HorizontalStackLayout Grid.Row="0" Spacing="8" HorizontalOptions="Center">
-                <Button x:Name="AllOrdersButton"
-                        Text="Все"
-                        Clicked="OnAllOrdersTabClicked"
-                        BackgroundColor="#e0e0e0" />
-                <Button x:Name="CompletedOrdersButton"
-                        Text="Завершённые"
-                        Clicked="OnCompletedOrdersTabClicked" />
-            </HorizontalStackLayout>
+    <Grid RowDefinitions="Auto, Auto, *, Auto" Padding="12" RowSpacing="10">
 
-            <!-- Поиск -->
-            <SearchBar x:Name="SearchBar"
-                       Grid.Row="1"
-                       Placeholder="Поиск по имени клиента..."
-                       TextChanged="OnSearchTextChanged"/>
+        <!-- Вкладки -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="8" HorizontalOptions="Center">
+            <Button x:Name="AllOrdersButton"
+                    Text="Все"
+                    Clicked="OnAllOrdersTabClicked"
+                    BackgroundColor="#e0e0e0" />
+            <Button x:Name="CompletedOrdersButton"
+                    Text="Завершённые"
+                    Clicked="OnCompletedOrdersTabClicked" />
+        </HorizontalStackLayout>
 
-            <!-- Масштабируемая область -->
-            <Grid Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <!-- Поиск -->
+        <SearchBar x:Name="SearchBar"
+                   Grid.Row="1"
+                   Placeholder="Поиск по имени клиента..."
+                   TextChanged="OnSearchTextChanged"/>
 
-                <!-- Кнопки масштабирования -->
-                <HorizontalStackLayout Grid.Row="0" Spacing="10" HorizontalOptions="End">
-                    <Button Text="+" WidthRequest="40" HeightRequest="40" Clicked="OnZoomInClicked"/>
-                    <Button Text="-" WidthRequest="40" HeightRequest="40" Clicked="OnZoomOutClicked"/>
-                </HorizontalStackLayout>
+        <!-- Список заказов с прокруткой -->
+        <ScrollView Grid.Row="2">
+            <CollectionView x:Name="OrdersCollectionView"
+                            IsGrouped="True"
+                            SelectionMode="None"
+                            Margin="0,4"
+                            VerticalOptions="FillAndExpand">
+                <CollectionView.GestureRecognizers>
+                    <PinchGestureRecognizer PinchUpdated="OnPinchUpdated"/>
+                </CollectionView.GestureRecognizers>
 
-                <!-- Содержимое с жестами и масштабированием -->
-                <ContentView Grid.Row="1"
-                             x:Name="ZoomContainer"
-                             HorizontalOptions="Fill"
-                             VerticalOptions="Fill">
-                    <ContentView.GestureRecognizers>
-                        <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
-                    </ContentView.GestureRecognizers>
+                <!-- Заголовок группы -->
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#f0f6ff"
+                               CornerRadius="8"
+                               Padding="8"
+                               Margin="0,6,0,4"
+                               HasShadow="False">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Key}" FontAttributes="Bold" FontSize="16" />
+                                <Label Grid.Column="1" Text="{Binding ItemCount, StringFormat='Всего: {0}'}"
+                                       FontSize="14" TextColor="Gray" HorizontalOptions="End" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
 
-                    <CollectionView x:Name="OrdersCollectionView"
-                                    IsGrouped="True"
-                                    SelectionMode="None"
-                                    Margin="0,4"
-                                    VerticalOptions="FillAndExpand">
-                        <!-- Заголовок группы -->
-                        <CollectionView.GroupHeaderTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="#f0f6ff"
-                                       CornerRadius="8"
-                                       Padding="8"
-                                       Margin="0,6,0,4"
-                                       HasShadow="False">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Label Text="{Binding Key}" FontAttributes="Bold" FontSize="16" />
-                                        <Label Grid.Column="1"
-                                               Text="{Binding Count, StringFormat='Всего: {0}'}"
-                                               FontSize="14"
-                                               TextColor="Gray"
-                                               HorizontalOptions="End" />
-                                    </Grid>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.GroupHeaderTemplate>
+                <!-- Элемент заказа -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="0,4"
+                               CornerRadius="10"
+                               BorderColor="LightGray"
+                               HasShadow="True"
+                               BackgroundColor="{Binding BackgroundColor}">
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                    <Label Text="{Binding CustomerName}" 
+                                           FontAttributes="Bold" 
+                                           FontSize="{Binding FontSize}" />
+                                    <Label Text="{Binding CustomerPhone}" 
+                                           FontSize="{Binding FontSize}" 
+                                           TextColor="Gray" />
+                                    <Label Text="{Binding Description}" 
+                                           FontSize="{Binding FontSize}" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding PickupDateTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                               FontSize="{Binding FontSize}" 
+                                               TextColor="DarkBlue"/>
+                                        <Label Text="{Binding StatusText}" 
+                                               TextColor="{Binding StatusColor}" 
+                                               FontSize="{Binding FontSize}" 
+                                               FontAttributes="Italic"/>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
 
-                        <!-- Элемент -->
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame Padding="10" Margin="0,4"
-                                       CornerRadius="10"
-                                       BorderColor="LightGray"
-                                       HasShadow="True"
-                                       BackgroundColor="{Binding BackgroundColor}">
-                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
-                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
-                                            <Label Text="{Binding CustomerName}" FontAttributes="Bold" FontSize="16"/>
-                                            <Label Text="{Binding CustomerPhone}" FontSize="13" TextColor="Gray"/>
-                                            <Label Text="{Binding Description}" FontSize="14"/>
-                                            <HorizontalStackLayout Spacing="8">
-                                                <Label Text="{Binding PickupDateTime, StringFormat='{0:dd.MM.yyyy HH:mm}'}" FontSize="12" TextColor="DarkBlue"/>
-                                                <Label Text="{Binding StatusText}" TextColor="{Binding StatusColor}" FontSize="12" FontAttributes="Italic"/>
-                                            </HorizontalStackLayout>
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </ContentView>
-
-                <!-- Счётчик -->
-                <Label x:Name="TotalCountLabel"
-                       Grid.Row="2"
-                       Text="Всего заказов: 0"
-                       FontAttributes="Bold"
-                       HorizontalOptions="End"
-                       Margin="0,6,0,0"/>
-            </Grid>
-        </Grid>
-    </ScrollView>
+        <!-- Нижний счётчик -->
+        <Label x:Name="TotalCountLabel"
+               Grid.Row="3"
+               Text="Всего заказов: 0"
+               FontAttributes="Bold"
+               HorizontalOptions="End"
+               Margin="0,6,0,0"/>
+    </Grid>
 </ContentPage>
