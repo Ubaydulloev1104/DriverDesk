@@ -3,100 +3,138 @@
              x:Class="DriverDesk.Pages.OrdersPage"
              Title="Активные заказы">
 
-   <CollectionView x:Name="OrdersView"
-                IsGrouped="True"
-                SelectionMode="None">
-    <CollectionView.GroupHeaderTemplate>
-        <DataTemplate>
-            <Frame BackgroundColor="#e0e0ff"
-                   Padding="8"
-                   CornerRadius="8"
-                   HasShadow="False">
-                <Label Text="{Binding Key, StringFormat='{0:dd MMMM yyyy}'}"
-                       FontAttributes="Bold"
-                       FontSize="18"
-                       TextColor="DarkBlue"/>
-            </Frame>
-        </DataTemplate>
-    </CollectionView.GroupHeaderTemplate>
+    <Grid RowDefinitions="Auto,*,Auto">
 
-    <CollectionView.ItemTemplate>
-        <DataTemplate>
-            <Frame Padding="10"
-                   CornerRadius="10"
-                   Margin="0,4"
-                   BorderColor="LightGray"
-                   HasShadow="True"
-                   BackgroundColor="{Binding BackgroundColor}">
-                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto"
-                      RowDefinitions="Auto,Auto,Auto"
-                      ColumnSpacing="8"
-                      RowSpacing="4">
+        <!-- Заголовок -->
+        <Label Grid.Row="0"
+               Text="Список активных заказов"
+               FontAttributes="Bold"
+               FontSize="20"
+               HorizontalOptions="Center"
+               Margin="0,8"
+               TextColor="DarkBlue"/>
 
-                    <!-- Галочка выполнения -->
-                    <Label Text="✔"
-                           FontSize="24"
-                           VerticalOptions="Center"
-                           HorizontalOptions="Start"
-                           TextColor="Green"
-                           IsVisible="{Binding IsCompleted}"/>
+        <!-- Основной список со скроллом -->
+        <ScrollView Grid.Row="1">
+            <CollectionView x:Name="OrdersView"
+                            IsGrouped="True"
+                            SelectionMode="None">
 
-                    <!-- Имя клиента -->
-                    <Label Grid.Column="1"
-                           Text="{Binding CustomerName}"
-                           FontAttributes="Bold"
-                           FontSize="16"/>
+                <!-- Заголовки групп -->
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#e0e0ff"
+                               Padding="8"
+                               CornerRadius="8"
+                               HasShadow="False"
+                               Margin="0,4">
+                            <Label Text="{Binding Key, StringFormat='{0:dd MMMM yyyy}'}"
+                                   FontAttributes="Bold"
+                                   FontSize="18"
+                                   TextColor="DarkBlue"/>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
 
-                    <!-- Телефон клиента -->
-                    <Label Grid.Row="1"
-                           Grid.Column="1"
-                           Text="{Binding CustomerPhone}"
-                           FontAttributes="Italic"
-                           TextColor="Blue"
-                           FontSize="14"/>
+                <!-- Элемент заказа -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10"
+                               CornerRadius="12"
+                               Margin="0,6"
+                               BorderColor="LightGray"
+                               HasShadow="True"
+                               BackgroundColor="{Binding BackgroundColor}">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+                                  RowDefinitions="Auto,Auto,Auto"
+                                  ColumnSpacing="8"
+                                  RowSpacing="6">
 
-                    <!-- Описание заказа -->
-                    <Label Grid.Row="2"
-                           Grid.Column="1"
-                           Text="{Binding Description}"
-                           FontSize="25"/>
+                                <!-- Галочка выполнения -->
+                                <Label Text="✔"
+                                       FontSize="20"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Start"
+                                       TextColor="Green"
+                                       IsVisible="{Binding IsCompleted}"/>
 
-                    <!-- Кнопка звонка -->
-                    <Button Grid.Column="2"
-                            Grid.Row="2"
-                            Text="📞"
-                            FontSize="14"
-                            WidthRequest="40"
-                            Clicked="OnCallClicked"/>
+                                <!-- Имя клиента -->
+                                <Label Grid.Column="1"
+                                       Text="{Binding CustomerName}"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="Black"/>
 
-                    <!-- Кнопка выполнено -->
-                    <Button Grid.Column="3"
-                            Grid.Row="2"
-                            Text="Выполнено"
-                            FontSize="14"
-                            Clicked="OnCompleteClicked"
-                            IsVisible="{Binding ShowCompleteButton}"/>
+                                <!-- Телефон клиента -->
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="{Binding CustomerPhone}"
+                                       FontAttributes="Italic"
+                                       TextColor="Blue"
+                                       FontSize="14"/>
 
-                    <!-- Кнопка оплачено -->
-                    <Button Grid.Column="4"
-                            Grid.Row="2"
-                            Text="Оплачено"
-                            FontSize="14"
-                            Clicked="OnPaidClicked"
-                            IsVisible="{Binding ShowPaidButton}"/>
+                                <!-- Описание заказа -->
+                                <Label Grid.Row="2"
+                                       Grid.Column="1"
+                                       Text="{Binding Description}"
+                                       FontSize="14"
+                                       TextColor="Gray"/>
 
-                    <!-- Кнопка удалить -->
-                    <Button Grid.Column="4"
-                            Grid.Row="1"
-                            Text="Удалить"
-                            FontSize="14"
-                            TextColor="Red"
-                            Clicked="OnDeleteClicked"
-                            IsVisible="{Binding ShowDeleteButton}"/>
-                </Grid>
-            </Frame>
-        </DataTemplate>
-    </CollectionView.ItemTemplate>
-</CollectionView>
+                                <!-- Кнопка звонка -->
+                                <Button Grid.Column="2"
+                                        Grid.Row="2"
+                                        Text="📞"
+                                        FontSize="16"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        CornerRadius="20"
+                                        BackgroundColor="#d9f0ff"
+                                        Clicked="OnCallClicked"/>
 
+                                <!-- Кнопка выполнено -->
+                                <Button Grid.Column="3"
+                                        Grid.Row="2"
+                                        Text="Выполнено"
+                                        FontSize="14"
+                                        Padding="6,2"
+                                        BackgroundColor="#c8facc"
+                                        Clicked="OnCompleteClicked"
+                                        IsVisible="{Binding ShowCompleteButton}"/>
+
+                                <!-- Кнопка оплачено -->
+                                <Button Grid.Column="4"
+                                        Grid.Row="2"
+                                        Text="Оплачено"
+                                        FontSize="14"
+                                        Padding="6,2"
+                                        BackgroundColor="#fff7c2"
+                                        Clicked="OnPaidClicked"
+                                        IsVisible="{Binding ShowPaidButton}"/>
+
+                                <!-- Кнопка удалить -->
+                                <Button Grid.Column="4"
+                                        Grid.Row="1"
+                                        Text="Удалить"
+                                        FontSize="14"
+                                        TextColor="Red"
+                                        Padding="6,2"
+                                        BackgroundColor="#ffe0e0"
+                                        Clicked="OnDeleteClicked"
+                                        IsVisible="{Binding ShowDeleteButton}"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Нижняя статистика -->
+        <Label Grid.Row="2"
+               x:Name="StatsLabel"
+               Text="Статистика заказов"
+               FontSize="14"
+               HorizontalOptions="End"
+               Margin="0,8"
+               TextColor="Gray"/>
+    </Grid>
 </ContentPage>
