@@ -9,8 +9,6 @@ namespace DriverDesk
 {
     class Class1
     {
-        int d = 1;
-        int C = 2; 
-        int SUM = 3; 
+    
     }
 }
