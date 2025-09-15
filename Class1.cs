@@ -3,9 +3,9 @@ namespace DriverDesk
 {
     class Class1
     {
-    
 
 
-        FFFF
+
+        int s = 2;
     }
 }
