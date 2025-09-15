@@ -6,8 +6,7 @@ namespace DriverDesk
 
         string game;
         string geymer;
-        int a = 1;
-
+    
 
     }
 }
