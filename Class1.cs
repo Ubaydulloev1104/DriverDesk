@@ -12,5 +12,6 @@ namespace DriverDesk
         int b; 
         int c;
         public int A { get { return a; } set { a = value; } }
+        public int B { get { return b; } set { b = value; } }
     }
 }
