@@ -11,6 +11,6 @@ namespace DriverDesk
         public int s;
         public int x; 
         public int y; 
-        public int z;
+
     }
 }
