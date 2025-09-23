@@ -9,7 +9,7 @@ namespace DriverDesk
     class test
     {
         public int s;
-        public int x; 
+
  
 
     }
