@@ -8,6 +8,9 @@ namespace DriverDesk
 {
     class test
     {
-        public int s; public int x; public int y; public int z;
+        public int s;
+        public int x; 
+        public int y; 
+        public int z;
     }
 }
