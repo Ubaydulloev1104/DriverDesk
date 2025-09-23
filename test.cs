@@ -10,7 +10,7 @@ namespace DriverDesk
     {
         public int s;
         public int x; 
-        public int y; 
+ 
 
     }
 }
