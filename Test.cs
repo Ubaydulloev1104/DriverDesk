@@ -8,5 +8,6 @@ namespace DriverDesk
 {
     class Test
     {
+        int sv = 1;
     }
 }
