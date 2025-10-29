@@ -1,5 +1,4 @@
-DriverDesk
-# 🎹 Piano
+# DriverDesk
 
 <H3>Hi!</H3>
 <H2>The project was created in C# (.NET 9.0, MAUI)</H2>
@@ -36,7 +35,7 @@ DriverDesk
 
 ---
 
-# 🇷🇺 Piano (на русском)
+# 🇷🇺 DriverDesk (на русском)
 
 <H3>Привет!</H3>
 
