@@ -20,8 +20,6 @@
 - **C# 12 / .NET 9.0**  
 - **Visual Studio 2022** (or any IDE supporting .NET 9)
 
----
-
 ## 🤝 Contributing
 
 
