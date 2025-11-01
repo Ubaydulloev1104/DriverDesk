@@ -7,13 +7,10 @@
 
 ## 🎶 Description (English)
 
----
----
+
 
 ## ✨ Features
-----
 
----
 
 ## 🛠️ Technologies
 
