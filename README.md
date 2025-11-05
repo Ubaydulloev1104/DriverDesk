@@ -3,8 +3,6 @@
 <H3>Hi!</H3>
 <H2>The project was created in C# (.NET 9.0, MAUI)</H2>
 
----
-
 ## 🎶 Description (English)
 
 ## ✨ Features
@@ -14,9 +12,6 @@
 - **Visual Studio 2022** (or any IDE supporting .NET 9)
 
 ## 🤝 Contributing
-
----
-
 ## 👨‍💻 Author
 
 **A'zamjon Ubaydulloev**  
