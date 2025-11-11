@@ -18,8 +18,6 @@
 - Telegram: [@ubaydulloev1104](https://t.me/ubaydulloev1104)  
 - Gmail: [ubaydulloev.1104@gmail.com](mailto:ubaydulloev.1104@gmail.com)
 
----
-
 # 🇷🇺 DriverDesk (на русском)
 
 <H3>Привет!</H3>
