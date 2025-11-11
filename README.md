@@ -4,7 +4,6 @@
 <H2>The project was created in C# (.NET 9.0, MAUI)</H2>
 
 ## 🎶 Description (English)
-
 ## ✨ Features
 
 ## 🛠️ Technologies
